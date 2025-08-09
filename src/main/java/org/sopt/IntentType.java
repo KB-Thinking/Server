@@ -3,7 +3,7 @@ package org.sopt;
 
 public enum IntentType {
     NONE,
-    RESTART,     // 처음부터/다시 시작/리셋
+    RESTART,     // 리셋
     MOVE,        // 화면 이동
     CONFIRM,     // 긍정
 
