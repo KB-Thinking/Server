@@ -1,73 +1,57 @@
 package org.sopt.common.scenario;
 
-import org.sopt.common.util.IntentUtils;
+import org.sopt.IntentDetector;
+import org.sopt.IntentType;
 import org.sopt.common.type.Route;
-import org.sopt.common.type.ScenarioStateStore;
 import org.sopt.dto.ChatResponse;
 import org.springframework.stereotype.Component;
 
+import static org.sopt.common.util.IntentUtils.includesAny;
+
+
 @Component
 public class FundScenario implements Scenario {
-    private final ScenarioStateStore state;
-
-    public FundScenario(ScenarioStateStore state) {
-        this.state = state;
-    }
 
     @Override
     public ChatResponse respond(Long userId, String text) {
-        int step = state.getStep(userId);
+        IntentType intent = IntentDetector.detect(text);
 
-        if (IntentUtils.includesAny(text, "수입", "자산", "관리", "고정비", "변동비")) step = Math.max(step, 0);
-        if (IntentUtils.includesAny(text, "상품", "저축", "투자")) step = Math.max(step, 1);
-        if (IntentUtils.includesAny(text, "연금저축", "적립식", "차이")) step = Math.max(step, 2);
-        if (IntentUtils.includesAny(text, "시작", "어떻게", "가입")) step = Math.max(step, 3);
-        if (IntentUtils.includesAny(text, "성향", "추천", "분석")) step = Math.max(step, 4);
-        if (IntentUtils.includesAny(text, "밸런스", "다이나믹", "차이")) step = Math.max(step, 5);
-        if (IntentUtils.includesAny(text, "선택", "가자", "선호", "밸런스 2040")) step = Math.max(step, 6);
-
-        String reply;
-        switch (step) {
-            case 0 -> {
-                reply = "수입 패턴을 보면 불규칙 요소가 있어요. 먼저 고정비/변동비를 구분하고, 남는 금액은 저축과 투자를 병행하는 방식을 권해요.";
-                state.setStep(userId, 1);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 1 -> {
-                reply = "선택지로 연금저축과 적립식 펀드가 있어요. 연금저축은 세액공제가 장점이고, 적립식 펀드는 매월 정기 투자로 자산 증식에 도움돼요. 어떤 쪽이 더 끌리세요?";
-                state.setStep(userId, 2);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 2 -> {
-                reply = "연금저축은 노후 준비와 세액공제에 유리하고, 적립식 펀드는 투자 성향에 맞춰 펀드를 선택해 정기 투자할 수 있어요.";
-                state.setStep(userId, 3);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 3 -> {
-                reply = "적립식 펀드는 KB 모바일 뱅킹 앱 ‘펀드’ 메뉴에서 시작할 수 있어요. 원하는 펀드를 고르고 금액을 설정하면 됩니다. 투자 성향 분석 후 맞춤 펀드를 추천드릴게요.";
-                state.setStep(userId, 4);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 4 -> {
-                reply = "분석 결과, 안정 추구 성향이라면 ‘KB밸런스 2040 펀드’ 또는 ‘KB다이나믹 주식형 펀드’를 추천드려요. 장기적인 관점에서 안정성을 고려한 조합입니다.";
-                state.setStep(userId, 5);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 5 -> {
-                reply = "‘KB밸런스 2040’은 자산배분으로 리스크를 분산해 안정적 성장을 지향해요. ‘KB다이나믹 주식형’은 수익 잠재력은 크지만 변동성이 있습니다. 어느 쪽이 더 맞으실까요?";
-                state.setStep(userId, 6);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            case 6 -> {
-                reply = "좋아요! 선택하신 펀드로 진행할게요. 지금 바로 가입 페이지로 이동해 드릴까요?";
-                state.setStep(userId, 7);
-                return ChatResponse.of(reply, Route.NONE);
-            }
-            default -> {
-                reply = "준비가 되셨다면 ‘바로 이동’이라고 말씀해 주세요. 가입 페이지로 연결해 드릴게요.";
-                state.setStep(userId, 7);
-                return ChatResponse.of(reply, Route.NONE);
-            }
+        if (intent == IntentType.RESTART || intent == IntentType.NONE) {
+            return new ChatResponse(
+                    "수입이 불규칙할 땐 고정비/변동비를 먼저 구분하고, 남는 금액은 저축과 투자를 병행하는 방식을 권해요. " +
+                            "원하시면 ‘어떤 상품이 있어?’라고 물어보세요.", Route.NONE.value());
         }
+
+        if (intent == IntentType.PRODUCT) {
+            String msg = "옵션으로는 ‘연금저축’과 ‘적립식 펀드’가 있어요. " +
+                    "연금저축은 세액공제가 장점이고, 적립식 펀드는 매월 정기 투자로 자산 증식에 도움돼요. " +
+                    "둘의 차이가 궁금하면 ‘차이점 알려줘’, 시작하려면 ‘어떻게 시작해?’라고 해보세요.";
+            return new ChatResponse(msg, Route.NONE.value());
+        }
+
+        if (intent == IntentType.START) {
+            String msg = "적립식 펀드는 KB 모바일 뱅킹 앱 ‘펀드’ 메뉴에서 시작할 수 있어요. 원하는 펀드를 선택하고 금액을 설정하면 됩니다. " +
+                    "원하시면 성향에 맞는 펀드를 ‘추천’해 드릴게요.";
+            return new ChatResponse(msg, Route.NONE.value());
+        }
+
+        if (intent == IntentType.PROFILE) {
+            String msg = "안정 선호라면 ‘KB밸런스 2040 펀드’ 또는 ‘KB다이나믹 주식형 펀드’를 추천드려요. " +
+                    "더 끌리는 쪽을 말씀해 주세요. (예: ‘밸런스 2040’)";
+            return new ChatResponse(msg, Route.NONE.value());
+        }
+
+        if (intent == IntentType.CHOOSE || includesAny(text, "밸런스 2040")) {
+            String msg = "좋습니다! ‘KB밸런스 2040 펀드’로 진행할게요. 지금 바로 가입 페이지로 이동해 드릴까요? " +
+                    "‘바로 이동해줘’라고 하시면 연결해 드립니다.";
+            return new ChatResponse(msg, Route.NONE.value());
+        }
+
+        if (intent == IntentType.MOVE) {
+            return new ChatResponse("펀드 가입 페이지로 이동합니다. 투자 금액과 자동이체를 설정해 주세요!", Route.FUND.value());
+        }
+
+        return new ChatResponse("자산관리는 고정비/변동비 구분 → 남는 금액 저축+투자 권장. " +
+                "‘상품’, ‘차이점’, ‘추천’, ‘어떻게 시작해?’ 중 하나를 말씀해 주세요.", Route.NONE.value());
     }
 }
