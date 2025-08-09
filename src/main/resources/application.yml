@@ -1,8 +1,10 @@
 server:
   port: 8080
-  address: 0.0.0.0
-  shutdown: graceful
 
 spring:
   application:
     name: kb-app
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+
