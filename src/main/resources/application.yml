@@ -8,3 +8,5 @@ spring:
 openai:
   api-key: ${OPENAI_API_KEY}
 
+mock:
+  data-dir: ${MOCK_DATA_DIR:./local-data}
