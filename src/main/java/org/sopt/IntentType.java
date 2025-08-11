@@ -18,6 +18,8 @@ public enum IntentType {
     START,       // 시작/가입
     PROFILE,     // 성향/추천/분석
     CHOOSE,      // 특정 펀드 선택
+    DIFF_PRODUCT,
+    DIFF_FUND,
 
     // STOCK
     BRIEFING,    // 오늘 동향/브리핑/레포트
