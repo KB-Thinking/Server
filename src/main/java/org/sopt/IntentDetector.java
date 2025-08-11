@@ -18,7 +18,7 @@ public final class IntentDetector {
         if (IntentUtils.includesAny(text, "처음부터","다시 시작","리셋","reset","초기화"))
             return IntentType.RESTART;
 
-        if (IntentUtils.includesAny(text, "이동해줘","이동 시켜줘","이동시켜줘","바로 이동","연결해줘","화면으로 이동","가입 페이지로 이동"))
+        if (IntentUtils.includesAny(text, "이동해줘","이동 시켜줘","이동시켜줘","바로 이동","연결해줘","화면으로 이동","가입 페이지로 이동","이동"))
             return IntentType.MOVE;
 
         if (IntentUtils.includesAny(text,
