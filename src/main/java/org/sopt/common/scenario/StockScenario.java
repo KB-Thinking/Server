@@ -99,7 +99,8 @@ public class StockScenario implements Scenario {
     }
 
     private ChatResponse handleAlert(JsonNode root, String text) {
-        if (includesAny(text.toLowerCase(), "nvidia", "엔비디아")) {
+        if (includesAny(text.toLowerCase(), "nvidia", "엔비디아", "알림", "알림 설정", "알람 설정", "알림을 설정", "알림 맞춰", "가격 알림", "알림 등록", "알림 추가", "알림 켜",
+                "nvidia 알림", "엔비디아 알림", "알림", "알람")) {
             String nvda = buildNvdaAlert(root);
             return new ChatResponse(nvda + "로 알림 설정 **완료되었습니다**.", Route.ALERT.value());
         }
