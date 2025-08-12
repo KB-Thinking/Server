@@ -30,7 +30,7 @@ public class LimitScenario implements Scenario {
         );
         if (hasSecurities) intent = IntentType.SECURITIES;
         if (intent == IntentType.NONE || intent == IntentType.RESTART || intent == IntentType.WITHDRAW) {
-            String msg = "현재 출금 한도는 " + dailyLimit + "원까지 설정되어 있어요. "
+            String msg = "현재 출금 한도는 " + "1,000,000" + "원까지 설정되어 있어요. "
                     + "한도를 넘기려면 신분증 인증과 추가 서류(예: 건강보험 고지서, 세금 고지서) 제출이 필요할 수 있어요.";
             return ChatResponse.of(msg, Route.NONE);
         }
@@ -51,7 +51,7 @@ public class LimitScenario implements Scenario {
             return ChatResponse.of("서류 제출 화면으로 이동합니다. 서류를 준비해 주세요!", Route.LIMIT);
         }
 
-        String fallback = "요청을 이해했어요. 요약하면, 출금 한도는 " + dailyLimit
+        String fallback = "요청을 이해했어요. 요약하면, 출금 한도는 " + "1,000,000"
                 + "원이고, 한도 상향 시 서류 제출이 필요합니다. ‘이동해줘’라고 하면 바로 연결해 드릴게요.";
         return ChatResponse.of(fallback, Route.NONE);
     }
