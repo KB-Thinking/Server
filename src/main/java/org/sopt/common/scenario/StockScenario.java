@@ -74,27 +74,27 @@ public class StockScenario implements Scenario {
         int hdQty = findQty(stocks, "005380"), hdAvg = findAvg(stocks, "005380");
 
         return "이준호님, 오늘의 주식 동향 브리핑입니다.\n"
-                + "- 삼성전자 주가는 " + df.format(ss) + "원으로 **0.5% 상승**했습니다. 글로벌 반도체 수요 증가와 안정적인 실적 덕분에 긍정적인 흐름이에요. "
+                + "- 삼성전자 주가는 " + df.format(ss) + "원으로 0.5% 상승했습니다. 글로벌 반도체 수요 증가와 안정적인 실적 덕분에 긍정적인 흐름이에요. "
                 + "(보유 " + ssQty + "주, 평단 " + df.format(ssAvg) + "원, 현재가 대비 " + pctText(ss, ssAvg) + ")\n"
-                + "- 카카오는 " + df.format(kakao) + "원으로 **0.3% 상승**했습니다. 광고 수익 증가와 콘텐츠 확장이 긍정적이지만, 규제 이슈는 여전히 변수입니다. "
+                + "- 카카오는 " + df.format(kakao) + "원으로 0.3% 상승했습니다. 광고 수익 증가와 콘텐츠 확장이 긍정적이지만, 규제 이슈는 여전히 변수입니다. "
                 + "(보유 " + kkQty + "주, 평단 " + df.format(kkAvg) + "원, 현재가 대비 " + pctText(kakao, kkAvg) + ")\n"
-                + "- 현대차는 " + df.format(hyundai) + "원으로 **1.2% 상승**했습니다. 전기차 시장 확장과 제품 믹스 개선으로 안정적인 상승 흐름을 보입니다. "
+                + "- 현대차는 " + df.format(hyundai) + "원으로 1.2% 상승했습니다. 전기차 시장 확장과 제품 믹스 개선으로 안정적인 상승 흐름을 보입니다. "
                 + "(보유 " + hdQty + "주, 평단 " + df.format(hdAvg) + "원, 현재가 대비 " + pctText(hyundai, hdAvg) + ")\n"
                 + "\n요약: 삼성전자·현대차는 안정적 흐름, 카카오는 단기 변동성 유의가 필요합니다.";
     }
 
     private String buildTrendAnalysis(JsonNode root) {
         return "네, 최근 시장 추세를 반영해 다시 분석드릴게요.\n"
-                + "• 삼성전자: 반도체 수요와 글로벌 경기 회복 효과로 **중장기적으로 긍정적**입니다.\n"
-                + "• 카카오: 광고·콘텐츠는 개선 중이나 **규제 우려**로 단기 **변동성 확대 가능성**이 있습니다.\n"
-                + "• 현대차: 전기차 라인업 확장, ASP 개선으로 **강한 성장 추세**를 유지하고 있습니다.\n"
+                + "• 삼성전자: 반도체 수요와 글로벌 경기 회복 효과로 중장기적으로 긍정적입니다.\n"
+                + "• 카카오: 광고·콘텐츠는 개선 중이나 규제 우려로 단기 변동성 확대 가능성이 있습니다.\n"
+                + "• 현대차: 전기차 라인업 확장, ASP 개선으로 강한 성장 추세를 유지하고 있습니다.\n"
                 + "\n전체적으로 삼성전자·현대차는 안정적인 추세를, 카카오는 신중 접근이 바람직해 보입니다.";
     }
 
     private String buildRecommendation(JsonNode root) {
-        return "이준호님, 현재 경제 전반적으로 **기술주가 강세**입니다. "
-                + "최근 IT 분야의 긍정적 실적 발표 영향이 있어요. 추천드리는 주식은 **NVIDIA**입니다. "
-                + "현재 **약 5% 상승 중**이며, AI 관련 투자 확대에 따른 **지속적 성장**이 기대됩니다. "
+        return "이준호님, 현재 경제 전반적으로 기술주가 강세입니다. "
+                + "최근 IT 분야의 긍정적 실적 발표 영향이 있어요. 추천드리는 주식은 NVIDIA입니다. "
+                + "현재 약 5% 상승 중이며, AI 관련 투자 확대에 따른 지속적 성장이 기대됩니다. "
                 + "관련 뉴스 브리핑이 필요하시면 말씀해 주세요.";
     }
 
@@ -102,7 +102,7 @@ public class StockScenario implements Scenario {
         if (includesAny(text.toLowerCase(), "nvidia", "엔비디아", "알림", "알림 설정", "알람 설정", "알림을 설정", "알림 맞춰", "가격 알림", "알림 등록", "알림 추가", "알림 켜",
                 "nvidia 알림", "엔비디아 알림", "알림", "알람")) {
             String nvda = buildNvdaAlert(root);
-            return new ChatResponse(nvda + "로 알림 설정 **완료되었습니다**.", Route.ALERT.value());
+            return new ChatResponse(nvda + "로 알림 설정 완료되었습니다.", Route.ALERT.value());
         }
         String own = buildOwnAlerts(root);
         String tail = "\n원하시면 NVIDIA(엔비디아)에도 알림을 추가할게요. \"엔비디아 알림 설정\"이라고 말씀해 주세요.";
@@ -130,8 +130,8 @@ public class StockScenario implements Scenario {
         double price = root.path("market").path("pricesUSD").path("NVDA").asDouble(215.00);
         double up = roundToNearestHalf(price * (1 + p));
         double dn = roundToNearestHalf(price * (1 - p));
-        return "NVIDIA 주식에 대해 **5% 상승** 또는 **5% 하락** 시 알림: **$"
-                + fmt2(up) + " 이상** 또는 **$" + fmt2(dn) + " 이하**";
+        return "NVIDIA 주식에 대해 5% 상승 또는 5% 하락 시 알림: $"
+                + fmt2(up) + " 이상 또는 $" + fmt2(dn) + " 이하";
     }
 
     private int findQty(JsonNode stocks, String ticker) {
